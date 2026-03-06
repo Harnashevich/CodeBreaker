@@ -7,13 +7,9 @@
 
 import SwiftUI
 
-extension Peg {
-    static let missing = Color.clear
-}
-
 struct Code {
     var kind: Kind
-    var pegs: [Peg] = Array(repeating: Peg.missing, count: 4)
+    var pegs: [Peg] = Array(repeating: Code.missingPeg, count: 4)
     
     static let missingPeg: Peg = .clear
     
@@ -33,10 +29,8 @@ struct Code {
     
     var isHidden: Bool {
         switch kind {
-        case .master(let isHidden):
-            isHidden
-        default:
-            false
+        case .master(let isHidden): return isHidden
+        default: return false
         }
     }
     
@@ -46,10 +40,8 @@ struct Code {
     
     var matches: [Match]? {
         switch kind {
-        case .attempt(let matches):
-            matches
-        default:
-            nil
+        case .attempt(let matches): return matches
+        default: return nil
         }
     }
     
@@ -58,14 +50,13 @@ struct Code {
         
         let backwardsExactMatches = pegs.indices.reversed().map { index in
             if pegsToMatch.count > index, pegsToMatch[index] == pegs[index] {
+                pegsToMatch.remove(at: index)
                 return Match.exact
             } else {
                 return .nomatch
             }
         }
-        
         let exactMatches = Array(backwardsExactMatches.reversed())
-        
         return pegs.indices.map { index in
             if exactMatches[index] != .exact, let matchIndex = pegsToMatch.firstIndex(of: pegs[index]) {
                 pegsToMatch.remove(at: matchIndex)
