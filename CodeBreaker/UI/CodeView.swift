@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct CodeView<AncillaryView>: View where AncillaryView: View {
-    
+    // MARK: Data In
     let code: Code
     
+    // MARK: Data Shared with Me
     @Binding var selection: Int
     
+    // MARK: Data (sort of) In Function
     @ViewBuilder let ancillaryView: () -> AncillaryView
     
+    // MARK: Data Owned by Me
     @Namespace private var selectionNamespace
     
     init(
@@ -26,6 +29,8 @@ struct CodeView<AncillaryView>: View where AncillaryView: View {
         self._selection = selection
         self.ancillaryView = ancillaryView
     }
+    
+    // MARK: - Body
     
     var body: some View {
         HStack {
@@ -47,7 +52,7 @@ struct CodeView<AncillaryView>: View where AncillaryView: View {
                             .foregroundStyle(code.isHidden ? Color.gray : .clear)
                             .transaction { transaction in
                                 if code.isHidden {
-                                    transaction.animation = .none
+                                    transaction.animation = nil
                                 }
                             }
                     }
@@ -57,20 +62,20 @@ struct CodeView<AncillaryView>: View where AncillaryView: View {
                         }
                     }
             }
-            
             Color.clear.aspectRatio(1, contentMode: .fit)
                 .overlay {
                     ancillaryView()
                 }
         }
+
     }
 }
 
 fileprivate struct Selection {
     static let border: CGFloat = 5
-    static let corderRadius: CGFloat = 10
-    static let color = Color.gray(0.85)
-    static let shape = RoundedRectangle(cornerRadius: Selection.corderRadius)
+    static let cornerRadius: CGFloat = 10
+    static let color: Color = Color.gray(0.85)
+    static let shape = RoundedRectangle(cornerRadius: cornerRadius)
 }
 
 //#Preview {

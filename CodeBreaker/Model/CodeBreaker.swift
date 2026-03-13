@@ -14,7 +14,7 @@ typealias Peg = Color
     var masterCode: Code = Code(kind: .master(isHidden: true))
     var guess: Code = Code(kind: .guess)
     var attempts: [Code] = []
-    let pegChoices: [Peg]
+    var pegChoices: [Peg]
     var startTime: Date = Date.now
     var endTime: Date?
     
@@ -57,7 +57,7 @@ typealias Peg = Color
 
 extension CodeBreaker: Identifiable, Hashable, Equatable {
     static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool {
-        lhs.id == rhs.id
+        return lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher) {
