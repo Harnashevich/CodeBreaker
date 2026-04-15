@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct PegView: View {
-    
+    // MARK: Data In
     let peg: Peg
+    
+    // MARK: - Body
     
     let pegShape = Circle()
     
@@ -17,11 +19,11 @@ struct PegView: View {
         pegShape
             .contentShape(pegShape)
             .aspectRatio(1, contentMode: .fit)
-            .foregroundStyle(peg)
+            .foregroundStyle(Color(hex: peg) ?? .clear)
     }
 }
 
 #Preview {
-    PegView(peg: .blue)
+    PegView(peg: Color.blue.hex)
         .padding()
 }
