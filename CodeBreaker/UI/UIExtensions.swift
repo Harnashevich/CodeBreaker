@@ -15,7 +15,7 @@ extension Animation {
 }
 
 extension AnyTransition {
-    static let pegChooser = AnyTransition.offset(x: 0, y: 200)
+    @MainActor static let pegChooser = AnyTransition.offset(x: 0, y: 200)
     static func attempt(_ isOver: Bool) -> AnyTransition {
         AnyTransition.asymmetric(
             insertion: isOver ? .opacity : .move(edge: .top),
@@ -25,7 +25,6 @@ extension AnyTransition {
 }
 
 extension View {
-    
     func flexibleSystemFont(minimum: CGFloat = 8, maximum: CGFloat = 80) -> some View {
         self
             .font(.system(size: maximum))
