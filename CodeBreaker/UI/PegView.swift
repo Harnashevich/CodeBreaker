@@ -13,7 +13,7 @@ struct PegView: View {
     
     // MARK: - Body
     
-    let pegShape = Circle()
+    let pegShape = Diamond()
     
     var body: some View {
         pegShape
@@ -26,4 +26,4 @@ struct PegView: View {
 #Preview {
     PegView(peg: Color.blue.hex)
         .padding()
-}
+} 

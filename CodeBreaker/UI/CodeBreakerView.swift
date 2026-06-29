@@ -10,7 +10,8 @@ import SwiftUI
 struct CodeBreakerView: View {
     // MARK: Data In
     @Environment(\.scenePhase) var scenePhase
-    
+    @Environment(\.sceneFrame) var sceneFrame
+
     // MARK: Data Shared with Me
     let game: CodeBreaker
 
@@ -42,16 +43,32 @@ struct CodeBreakerView: View {
                     .transition(.attempt(game.isOver))
                 }
             }
-            if !game.isOver {
-                PegChooser(choices: game.pegChoices, onChoose: changePegAtSelection)
-                    .transition(.pegChooser)
-                    .frame(maxHeight: 90)
+            GeometryReader { geometry in
+                if !game.isOver {
+                    let offset = sceneFrame.maxY - geometry.frame(in: .global).minY
+                    PegChooser(choices: game.pegChoices, onChoose: changePegAtSelection)
+                        .transition(.offset(x: 0, y: offset))
+                }
             }
+            .aspectRatio(CGFloat(game.pegChoices.count), contentMode: .fit)
+            .frame(maxHeight: 90)
         }
+        .highPriorityGesture(pegChoosingDial) // in iOS26, make this a highPriorityGesture (i.e. more important than newly added system gestures)
         .trackElapsedTime(in: game)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Restart", systemImage: "arrow.circlepath", action: restart)
+            }
+            ToolbarItem {
+                Button("Save", systemImage: "square.and.arrow.down") {
+                    // write JSON of this game out into the documents directory
+                    if let json = try? JSONEncoder().encode(game) {
+                        let url = URL.documentsDirectory
+                            .appendingPathComponent(game.name)
+                            .appendingPathExtension("json")
+                        try? json.write(to: url)
+                    }
+                }
             }
             ToolbarItem {
                 ElapsedTime(startTime: game.startTime, endTime: game.endTime, elapsedTime: game.elapsedTime)
@@ -60,6 +77,14 @@ struct CodeBreakerView: View {
             }
         }
         .padding()
+    }
+    
+    var pegChoosingDial: some Gesture {
+        RotateGesture()
+            .onChanged { value in
+                let pegChoiceIndex = Int(abs(value.rotation.degrees) / 45) % game.pegChoices.count
+                game.guess.pegs[selection] = game.pegChoices[pegChoiceIndex]
+            }
     }
     
     func changePegAtSelection(to peg: Peg) {
